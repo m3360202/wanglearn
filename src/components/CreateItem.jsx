@@ -25,6 +25,7 @@ export default function CreateItem() {
                 todu:null,
                 Edusign:generateRandomId(),
                 Edutoken:getRandomId(),
+                state:0
 
             }
             const oldList = useTodoList.getState().todoList;

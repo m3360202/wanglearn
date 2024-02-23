@@ -39,8 +39,11 @@ export function getRandomId() {
 // }
 
 export async function handleTask(index) {
-    useActions.setState({ taskState: 1 });
+
     let taskItems = [...useTodoList.getState().todoList[index].todu];
+    //将index的item的state设置为1
+    let oldList = useTodoList.getState().todoList;
+    useTodoList.setState({ todoList: oldList.map((item, i) => i === index ? { ...item, state: 1 } : item) });
 
     // 并发处理所有任务项
     const results = await Promise.all(taskItems.map(async item => {
@@ -49,7 +52,10 @@ export async function handleTask(index) {
             const callTimes = Math.ceil((item.totalTime - item.realPlayTime) * 10);
             for (let i = 0; i < callTimes; i++) {
                 // 并发调用接口，不需要等待上一个调用完成
-                await makeRequest(item);
+                if(item.realPlayTime > 0 && item.realPlayTime < item.totalTime){
+                    await makeRequest(item);
+                }
+                
             }
             // 更新realPlayTime
             useActions.setState({
